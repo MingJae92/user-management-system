@@ -1,9 +1,10 @@
+// styles/loginStyles/loginStyles.styles.ts
 import { styled } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
 
 export const Wrapper = styled(Box)({
-  height: "100vh", // full viewport height
-  width: "100vw",  // full viewport width
+  height: "100vh",
+  width: "100vw",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
@@ -16,7 +17,7 @@ export const ContainerBox = styled(Box)(({ theme }) => ({
   flexDirection: "row",
   width: "90%",
   maxWidth: 900,
-  height: "500px",
+  height: 500,
   borderRadius: theme.spacing(2),
   boxShadow: "0 12px 32px rgba(0, 0, 0, 0.1)",
   overflow: "hidden",
@@ -34,13 +35,15 @@ export const FormBox = styled(Box)(({ theme }) => ({
 }));
 
 export const ImageBox = styled(Box)({
-  width: "50%",
-  height: "100%",
-  backgroundImage: `url('https://images.unsplash.com/photo-1640622651243-d80411b72d5e?auto=format&fit=crop&w=900&q=80')`,
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  backgroundRepeat: "no-repeat",
-});
+    width: "50%",
+    height: "100%",
+    backgroundImage: `url(' https://images.unsplash.com/photo-1667746213225-431db3ed8d13?q=80&w=2974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    // backgroundColor: "gray", // Temporary to check if the box is rendering
+  });
+ 
 
 export const Title = styled(Typography)({
   fontWeight: 700,
@@ -50,3 +53,5 @@ export const Title = styled(Typography)({
 export const Subtitle = styled(Typography)({
   color: "#666",
 });
+
+

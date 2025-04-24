@@ -1,10 +1,10 @@
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
-
+import { Typography } from "@mui/material";
 import {
   Wrapper,
   ContainerBox,
-  ImageBox,
   FormBox,
+  ImageBox,
   Title,
   Subtitle,
 } from "../../styles/loginStyles/loginStyles.styles";
@@ -21,14 +21,11 @@ function Login() {
   return (
     <Wrapper>
       <ContainerBox>
-        {/* 👇 Login form on the left */}
         <FormBox>
           <Title variant="h4">Admin login</Title>
           <Subtitle variant="body1">Welcome back! Please sign in.</Subtitle>
           <GoogleLogin onSuccess={responseMessage} onError={errorMessage} />
         </FormBox>
-
-        {/* 👇 Image on the right */}
         <ImageBox />
       </ContainerBox>
     </Wrapper>
