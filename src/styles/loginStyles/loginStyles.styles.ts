@@ -37,11 +37,11 @@ export const FormBox = styled(Box)(({ theme }) => ({
 export const ImageBox = styled(Box)({
     width: "50%",
     height: "100%",
-    backgroundImage: `url(' https://images.unsplash.com/photo-1667746213225-431db3ed8d13?q=80&w=2974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+    backgroundImage: `url('https://images.unsplash.com/photo-1667746213225-431db3ed8d13?q=80&w=2974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
-    // backgroundColor: "gray", // Temporary to check if the box is rendering
+    
   });
  
 

@@ -1,4 +1,6 @@
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { useAuth } from "../Context/Authcontext"; // Import the useAuth hook
+import { useNavigate } from "react-router-dom";
 import { Typography } from "@mui/material";
 import {
   Wrapper,
@@ -10,8 +12,22 @@ import {
 } from "../../styles/loginStyles/loginStyles.styles";
 
 function Login() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   const responseMessage = (response: CredentialResponse) => {
     console.log("You are logged in:", response.credential);
+
+    const userData = {
+      id: "user-id",
+      name: "User Name",
+      email: "user@example.com",
+    };
+
+    login(userData);
+
+    // After login, redirect to the dashboard
+    navigate("/dashboard");
   };
 
   const errorMessage = () => {
