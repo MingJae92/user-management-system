@@ -20,19 +20,19 @@ const connectDB = async () => {
     console.log("Connected to Azure SQL Database ✅");
 
     // Query to fetch all users from the Users table (replace 'Users' with your actual table name)
-    const result = await sql.query("SELECT * FROM Users");
+    // const result = await sql.query("SELECT * FROM Users");
 
-    console.log("Fetched Users from Users table:", result.recordset);
+    // console.log("Fetched Users from Users table:", result.recordset);
 
-    // Query to get SQL Server users
-    const sqlUsers = await sql.query("SELECT name FROM sys.database_principals WHERE type = 'S' AND name <> 'dbo'");
+    // // Query to get SQL Server users
+    // const sqlUsers = await sql.query("SELECT name FROM sys.database_principals WHERE type = 'S' AND name <> 'dbo'");
 
-    console.log("Fetched SQL Server Users:", sqlUsers.recordset);
+    // console.log("Fetched SQL Server Users:", sqlUsers.recordset);
 
-    return {
-      appUsers: result.recordset, // application users
-      sqlUsers: sqlUsers.recordset, // SQL Server users
-    };
+    // return {
+    //   appUsers: result.recordset, // application users
+    //   sqlUsers: sqlUsers.recordset, // SQL Server users
+    // };
 
   } catch (error) {
     console.error("Database connection failed ❌", error);

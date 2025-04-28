@@ -2,10 +2,15 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "../DatabaseConnection/databaseConnection.js";
 import sql from "mssql";
+
+import userRoutes from "../Routes/userRoutes.js";
 dotenv.config({ path: "../../config/.env" });
 
 const app = express();
-const PORT = process.env.SERVER_PORT || 9000;
+app.use(express.json());
+const PORT = process.env.SERVER_PORT || 7000;
+
+app.use("/api/users", userRoutes);
 
 // API route to fetch users from Azure SQL
 // app.get("/users", async (req, res) => {
