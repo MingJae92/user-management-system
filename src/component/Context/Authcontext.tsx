@@ -1,7 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Define types for user and context
 export type UserDataTypes = {
   id: string;
   name: string;
@@ -36,21 +35,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = (userData: UserDataTypes) => {
     setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData)); // Store user data in localStorage
-    navigate("/dashboard"); // Navigate to dashboard after login
+    localStorage.setItem("user", JSON.stringify(userData));
+    navigate("/dashboard");
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    navigate("/login"); // Navigate to login page after logout
+    navigate("/login");
   };
 
   const value: AuthcontextDataTypes = {
     user,
     login,
     logout,
-    isAuthenticated: !!user, // Check if user exists (authenticated)
+    isAuthenticated: !!user,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

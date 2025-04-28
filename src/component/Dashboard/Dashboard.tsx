@@ -1,10 +1,9 @@
-import { useAuth } from "../Context/Authcontext"; // Import the useAuth hook
+import { useAuth } from "../Context/Authcontext";
 
 const Dashboard = () => {
-  const { user, logout } = useAuth(); // Get user data and logout function from context
+  const { user, logout } = useAuth();
 
   if (!user) {
-    // Optionally handle the case where there's no user logged in
     return <div>Please log in to access the dashboard.</div>;
   }
 

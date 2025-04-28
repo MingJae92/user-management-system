@@ -3,6 +3,7 @@ import { useAuth } from "../Context/Authcontext";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Typography } from "@mui/material";
+import axios from "axios";
 import {
   Wrapper,
   ContainerBox,
@@ -20,18 +21,28 @@ type GoogleUserData = {
 
 function Login() {
   const navigate = useNavigate();
-  const { login, user } = useAuth(); // Destructure login function and user from context
+  const { login, user } = useAuth();
 
-  const responseMessage = (response: CredentialResponse) => {
-    console.log("Google Login successful:", response); // Debugging log
+  const responseMessage = async (response: CredentialResponse) => {
+    console.log("Google Login successful:", response);
+
     if (response.credential) {
-      const userData: GoogleUserData = {
-        id: response.credential,
-        name: "User Name", // Replace with actual data from response
-        email: "user@example.com", // Replace with actual data from response
-      };
+      try {
+        const idToken = response.credential;
 
-      login(userData); // Update the user context and redirect to dashboard
+        // Fetch user profile data using Axios
+        const googleUser = await fetchUserData(idToken);
+
+        const userData: GoogleUserData = {
+          id: googleUser.sub,
+          name: googleUser.name,
+          email: googleUser.email,
+        };
+
+        login(userData);
+      } catch (error) {
+        console.error("Error fetching user data from Google:", error);
+      }
     }
   };
 
@@ -39,11 +50,22 @@ function Login() {
     console.log("Login failed or was cancelled");
   };
 
-  // Redirect on login (if the user is already logged in)
+  const fetchUserData = async (idToken: string) => {
+    try {
+      const response = await axios.get(
+        `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${idToken}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user data from Google API:", error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     if (user) {
       console.log("User already logged in, navigating to dashboard...");
-      navigate("/dashboard"); // Navigate to dashboard if the user is already logged in
+      navigate("/dashboard");
     }
   }, [user, navigate]);
 
