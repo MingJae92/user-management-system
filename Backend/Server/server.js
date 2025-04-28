@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv"
 dotenv.config({ path: "../../config/.env" });
+import connectDB from "../DatabaseConnection/databaseConnection.js";
 
 
 const app = express();
@@ -17,3 +18,4 @@ const startServer = async () => {
 };
 
 startServer();
+connectDB()
