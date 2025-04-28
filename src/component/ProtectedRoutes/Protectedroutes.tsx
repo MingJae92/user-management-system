@@ -1,17 +1,20 @@
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../Context/Authcontext"; // Access Auth context
-import { ProtectRoutesProps } from "../../types/authProviderTypes/authprovider.types";
+import { useAuth } from "../Context/Authcontext";
+import { Navigate } from "react-router-dom";
 
-function Protectedroutes({ children }: ProtectRoutesProps) {
-  const { user } = useAuth(); // Access current user from Auth context
-
-  if (!user) {
-    // If user is not authenticated, redirect to login page
-    return <Navigate to="/login" replace />;
-  }
-
-  // If user is authenticated, render children (the protected route, e.g., /dashboard)
-  return children || <Outlet />;
+interface ProtectedRouteProps {
+  children: React.ReactNode;
 }
 
-export default Protectedroutes;
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const { user } = useAuth();
+
+  // If no user (not authenticated), redirect to login page
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  // If user is authenticated, render the children (protected content)
+  return <>{children}</>;
+};
+
+export default ProtectedRoute;

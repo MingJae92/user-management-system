@@ -1,9 +1,19 @@
 import { createContext, useContext, useState } from "react";
-import {
-  AuthProviderDataTypes,
-  UserDataTypes,
-  AuthcontextDataTypes,
-} from "../../types/authProviderTypes/authprovider.types";
+import { useNavigate } from "react-router-dom";
+
+// Define types for user and context
+export type UserDataTypes = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+export type AuthcontextDataTypes = {
+  user: UserDataTypes | null;
+  login: (userData: UserDataTypes) => void;
+  logout: () => void;
+  isAuthenticated: boolean;
+};
 
 const AuthContext = createContext<AuthcontextDataTypes>({
   user: null,
@@ -20,33 +30,27 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider = ({ children }: AuthProviderDataTypes) => {
-  const [user, setUser] = useState<UserDataTypes | null>(() => {
-    try {
-      const savedUser = localStorage.getItem("user");
-      return savedUser ? (JSON.parse(savedUser) as UserDataTypes) : null;
-    } catch (error) {
-      console.error("Error reading user from localStorage", error);
-      return null;
-    }
-  });
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<UserDataTypes | null>(null);
 
   const login = (userData: UserDataTypes) => {
     setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("user", JSON.stringify(userData)); // Store user data in localStorage
+    navigate("/dashboard"); // Navigate to dashboard after login
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    navigate("/login"); // Navigate to login page after logout
   };
 
-  // Context value to provide
   const value: AuthcontextDataTypes = {
     user,
     login,
     logout,
-    isAuthenticated: !!user, 
+    isAuthenticated: !!user, // Check if user exists (authenticated)
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
