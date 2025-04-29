@@ -1,22 +1,13 @@
-import sql from "mssql";
+import { connectDB } from "../DatabaseConnection/databaseConnection.js";
 
 const getUsersFromDatabase = async () => {
   try {
-    const pool = await sql.connect({
-      user: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      server: process.env.DB_SERVER,
-      database: process.env.DB_DATABASE,
-      options: {
-        encrypt: true,
-        trustServerCertificate: true,
-      },
-    });
+    const pool = await connectDB(); // Ensure this returns the connection pool
 
     const result = await pool.request().query("SELECT * FROM Users");
-    return result.recordset;
+    return result.recordset; // Return the fetched users
   } catch (error) {
-    console.error("Error fetching users from database:", error);
+    console.error("❌ Error fetching users from database:", error);
     throw error;
   }
 };

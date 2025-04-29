@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import connectDB from "../DatabaseConnection/databaseConnection.js";
+import {connectDB} from "../DatabaseConnection/databaseConnection.js";
 import sql from "mssql";
 
 import userRoutes from "../Routes/userRoutes.js";
