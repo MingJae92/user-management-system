@@ -4,6 +4,11 @@ import {connectDB} from "../DatabaseConnection/databaseConnection.js";
 import sql from "mssql";
 
 import userRoutes from "../Routes/userRoutes.js";
+import createUserRoutes from "../Routes/createUserRoutes.js"
+import updateUserRoutes from "../Routes/updateUserRoutes.js"
+import deleteUserRoutes from "../Routes/deleteUserRoutes.js"
+
+
 dotenv.config({ path: "../../config/.env" });
 
 const app = express();
@@ -11,6 +16,9 @@ app.use(express.json());
 const PORT = process.env.SERVER_PORT || 7000;
 
 app.use("/api/users", userRoutes);
+app.use("/api/users/createuser", createUserRoutes )
+app.use("/api/users/updateuser", updateUserRoutes)
+app.use("/api/users/deleteuser", deleteUserRoutes)
 
 // API route to fetch users from Azure SQL
 // app.get("/users", async (req, res) => {
@@ -33,7 +41,7 @@ app.use("/api/users", userRoutes);
 
 //     res.json(result.recordset); // Send the user data as a response
 //   } catch (error) {
-//     console.error("Failed to fetch user data ❌", error);
+//     console.error("Failed to fetch user data ", error);
 //     res.status(500).send("Server Error");
 //   }
 // });
@@ -43,7 +51,7 @@ const startServer = async () => {
   try {
     await connectDB(); // Ensure DB is connected
     app.listen(PORT, () => {
-      console.log(`Server listening on: ${PORT} 🚀`);
+      console.log(`Server listening on: ${PORT}`);
     });
   } catch (error) {
     console.error("Error starting server:", error);

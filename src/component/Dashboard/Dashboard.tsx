@@ -1,8 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../Context/Authcontext";
-import { User } from "../../types/userTypes/userTypes.types";
-import axios from "axios";
-
 import {
   Typography,
   Box,
@@ -11,8 +8,14 @@ import {
   Card,
   CardContent,
   Avatar,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
-
 import {
   dashboardContainer,
   sectionTitle,
@@ -22,33 +25,59 @@ import {
   userCardContainer,
   userCard,
 } from "../../styles/dashBoardStyles/dashBoardStyles.styles";
+import useCreateUser from "../../hooks/useCreateUser";
+import useReadUser from "../../hooks/useReadUser";
+import { UserInput } from "../../types/userTypes/userTypes.types";
 
 const Dashboard = () => {
-  const [userData, setUserData] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
-
   const { user, logout } = useAuth();
+  const { loading, error, userData, refetch } = useReadUser();
+  const { createUser } = useCreateUser();
 
-  useEffect(() => {
-    const userDataFetch = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get("http://localhost:9000/api/users");
-        setUserData(response.data.users);
-      } catch (err) {
-        setError(true);
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState<UserInput>({
+    DisplayName: "",
+    Email: "",
+    Status: "Active",
+    isOSPAdmin: false,
+    AdminUser: 0,
+  });
 
-    userDataFetch();
-  }, []);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: checked,
+    }));
+  };
+
+  const handleCreateUser = async () => {
+    await createUser(formData);
+    await refetch(); 
+    setOpen(false);
+    setFormData({
+      DisplayName: "",
+      Email: "",
+      Status: "Active",
+      isOSPAdmin: false,
+      AdminUser: 0,
+    });
+  };
 
   if (!user) {
-    return <Typography sx={errorText}>Please log in to access the dashboard.</Typography>;
+    return (
+      <Typography sx={errorText}>
+        Please log in to access the dashboard.
+      </Typography>
+    );
   }
 
   if (loading) {
@@ -74,6 +103,15 @@ const Dashboard = () => {
         Log out
       </Button>
 
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => setOpen(true)}
+        sx={{ mt: 3 }}
+      >
+        Create New User
+      </Button>
+
       <Typography variant="h5" sx={sectionTitle}>
         All Users:
       </Typography>
@@ -82,20 +120,76 @@ const Dashboard = () => {
         {userData.map((item) => (
           <Card key={item.UserID} sx={userCard}>
             <CardContent>
-              {/* Avatar section */}
               <Box display="flex" alignItems="center" mb={2}>
                 <Avatar sx={{ mr: 2 }}>{item.DisplayName[0]}</Avatar>
                 <Typography variant="h6">{item.DisplayName}</Typography>
               </Box>
-
-              <Typography variant="body2"><strong>Email:</strong> {item.Email}</Typography>
-              <Typography variant="body2"><strong>Status:</strong> {item.Status}</Typography>
-              <Typography variant="body2"><strong>Is Admin:</strong> {item.IsOSPAdmin ? "Yes" : "No"}</Typography>
-              <Typography variant="body2"><strong>AdminUser Flag:</strong> {item.AdminUser}</Typography>
+              <Typography variant="body2">
+                <strong>Email:</strong> {item.Email}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Status:</strong> {item.Status}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Is Admin:</strong> {item.IsOSPAdmin ? "Yes" : "No"}
+              </Typography>
+              <Typography variant="body2">
+                <strong>AdminUser Flag:</strong> {item.AdminUser}
+              </Typography>
             </CardContent>
           </Card>
         ))}
       </Box>
+
+      {/* Modal */}
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>Create New User</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            name="DisplayName"
+            label="Display Name"
+            fullWidth
+            value={formData.DisplayName}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="Email"
+            label="Email"
+            fullWidth
+            value={formData.Email}
+            onChange={handleChange}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={formData.isOSPAdmin}
+                onChange={handleSwitchChange}
+                name="IsOSPAdmin"
+              />
+            }
+            label="Is Admin"
+          />
+          <TextField
+            margin="dense"
+            name="AdminUser"
+            label="Admin User Flag"
+            fullWidth
+            type="number"
+            value={formData.AdminUser}
+            onChange={handleChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleCreateUser} color="primary" variant="contained">
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

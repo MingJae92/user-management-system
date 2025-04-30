@@ -1,20 +1,21 @@
-import React, { use, useState } from "react";
+import React, {  useState } from "react";
 import { User } from "../types/userTypes/userTypes.types";
 import axios from "axios";
+import { UserInput } from "../types/userTypes/userTypes.types";
 
 function useCreateUser() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
+  const [error, setError] = useState<null | string>(null);
 
-  const createUser = async (newUser: User) => {
+  const createUser = async (newUser: UserInput) => {
     try {
       const dataResponse = await axios.post(
-        "http://localhost:9000/api/users",
+        "http://localhost:9000/api/users/createuser",
         newUser
       );
       return dataResponse.data;
     } catch (error) {
-      setError(true);
+      setError(null);
       console.log("Post error: ", error);
     } finally {
       setLoading(false);
