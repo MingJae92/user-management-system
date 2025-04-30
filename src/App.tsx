@@ -8,7 +8,9 @@ function App() {
   return (
     <AuthProvider>
       <Routes>
+        
         <Route path="/login" element={<Login />} />
+
         <Route
           path="/dashboard"
           element={

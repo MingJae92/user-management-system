@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../Context/Authcontext";
 import {
   Typography,
@@ -27,23 +27,39 @@ import {
 } from "../../styles/dashBoardStyles/dashBoardStyles.styles";
 import useCreateUser from "../../hooks/useCreateUser";
 import useReadUser from "../../hooks/useReadUser";
-import { UserInput } from "../../types/userTypes/userTypes.types";
+import { UserInput, User } from "../../types/userTypes/userTypes.types";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const { loading, error, userData, refetch } = useReadUser();
   const { createUser } = useCreateUser();
 
+  const [filterType, setFilterType] = useState<string>("all");
   const [open, setOpen] = useState(false);
+
   const [formData, setFormData] = useState<UserInput>({
     DisplayName: "",
     Email: "",
     Status: "Active",
-    isOSPAdmin: false,
+    IsOSPAdmin: false,
     AdminUser: 0,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const filteredUsers = applyFilter(userData, filterType);
+
+  function applyFilter(users: User[], criteria: string): User[] {
+    const filterMap: Record<string, () => User[]> = {
+      active: () => users.filter((u) => u.Status === "Active"),
+      admin: () => users.filter((u) => u.IsOSPAdmin),
+      all: () => users,
+    };
+
+    return filterMap[criteria]?.() || users;
+  }
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -61,13 +77,13 @@ const Dashboard = () => {
 
   const handleCreateUser = async () => {
     await createUser(formData);
-    await refetch(); 
+    await refetch();
     setOpen(false);
     setFormData({
       DisplayName: "",
       Email: "",
       Status: "Active",
-      isOSPAdmin: false,
+      IsOSPAdmin: false,
       AdminUser: 0,
     });
   };
@@ -112,12 +128,25 @@ const Dashboard = () => {
         Create New User
       </Button>
 
+      {/* Filter Buttons */}
+      <Box sx={{ mt: 3, mb: 2 }}>
+        <Button variant="outlined" onClick={() => setFilterType("active")}>
+          Show Active Users
+        </Button>
+        <Button variant="outlined" onClick={() => setFilterType("admin")} sx={{ ml: 2 }}>
+          Show Admins
+        </Button>
+        <Button variant="outlined" onClick={() => setFilterType("all")} sx={{ ml: 2 }}>
+          Show All Users
+        </Button>
+      </Box>
+
       <Typography variant="h5" sx={sectionTitle}>
-        All Users:
+        {filterType === "all" ? "All Users:" : `Filtered Users: ${filterType}`}
       </Typography>
 
       <Box sx={userCardContainer}>
-        {userData.map((item) => (
+        {filteredUsers.map((item) => (
           <Card key={item.UserID} sx={userCard}>
             <CardContent>
               <Box display="flex" alignItems="center" mb={2}>
@@ -164,7 +193,7 @@ const Dashboard = () => {
           <FormControlLabel
             control={
               <Switch
-                checked={formData.isOSPAdmin}
+                checked={formData.IsOSPAdmin}
                 onChange={handleSwitchChange}
                 name="IsOSPAdmin"
               />

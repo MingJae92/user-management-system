@@ -26,7 +26,7 @@ export interface UserInput {
     DisplayName: string;
     Email: string;
     Status: string;
-    isOSPAdmin: boolean;
+    IsOSPAdmin: boolean;
     AdminUser: number;
   }
   

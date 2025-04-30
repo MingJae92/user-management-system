@@ -1,61 +1,37 @@
 import express from "express";
+import cors from "cors"; // 👈 import CORS
 import dotenv from "dotenv";
-import {connectDB} from "../DatabaseConnection/databaseConnection.js";
+import { connectDB } from "../DatabaseConnection/databaseConnection.js";
 import sql from "mssql";
 
 import userRoutes from "../Routes/userRoutes.js";
-import createUserRoutes from "../Routes/createUserRoutes.js"
-import updateUserRoutes from "../Routes/updateUserRoutes.js"
-import deleteUserRoutes from "../Routes/deleteUserRoutes.js"
-
+import createUserRoutes from "../Routes/createUserRoutes.js";
+import updateUserRoutes from "../Routes/updateUserRoutes.js";
+import deleteUserRoutes from "../Routes/deleteUserRoutes.js";
 
 dotenv.config({ path: "../../config/.env" });
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 const PORT = process.env.SERVER_PORT || 7000;
 
 app.use("/api/users", userRoutes);
-app.use("/api/users/createuser", createUserRoutes )
-app.use("/api/users/updateuser", updateUserRoutes)
-app.use("/api/users/deleteuser", deleteUserRoutes)
+app.use("/api/users/createuser", createUserRoutes);
+// app.use("/api/users/updateuser", updateUserRoutes);
+// app.use("/api/users/deleteuser", deleteUserRoutes);
 
-// API route to fetch users from Azure SQL
-// app.get("/users", async (req, res) => {
-//   try {
-//     const pool = sql.connect({
-//       user: process.env.DB_USERNAME,
-//       password: process.env.DB_PASSWORD,
-//       server: process.env.DB_SERVER,
-//       database: process.env.DB_DATABASE,
-//       options: {
-//         encrypt: true, // for Azure
-//         trustServerCertificate: true,
-//       },
-//     });
+// ... rest of your code
 
-//     const result = await pool.request().query("SELECT * FROM * Users");
-
-//     // Console log when users are fetched successfully
-//     console.log("Fetched Users: ", result.recordset);
-
-//     res.json(result.recordset); // Send the user data as a response
-//   } catch (error) {
-//     console.error("Failed to fetch user data ", error);
-//     res.status(500).send("Server Error");
-//   }
-// });
-
-// Start the server
 const startServer = async () => {
   try {
-    await connectDB(); // Ensure DB is connected
+    await connectDB();
     app.listen(PORT, () => {
       console.log(`Server listening on: ${PORT}`);
     });
   } catch (error) {
     console.error("Error starting server:", error);
-    process.exit(1); // Exit the process if the server fails to start
+    process.exit(1);
   }
 };
 
