@@ -42,6 +42,11 @@ const Dashboard = () => {
     Email: "",
     Status: "Active",
     IsOSPAdmin: false,
+    FunctionalUser: false,
+    BlockAccess: false,
+    O365Email: "",
+    MFA_Mobile: "",
+    ColourMode: "Light",
     AdminUser: 0,
   });
 
@@ -84,6 +89,11 @@ const Dashboard = () => {
       Email: "",
       Status: "Active",
       IsOSPAdmin: false,
+      FunctionalUser: false,
+      BlockAccess: false,
+      O365Email: "",
+      MFA_Mobile: "",
+      ColourMode: "Light",
       AdminUser: 0,
     });
   };
@@ -163,6 +173,21 @@ const Dashboard = () => {
                 <strong>Is Admin:</strong> {item.IsOSPAdmin ? "Yes" : "No"}
               </Typography>
               <Typography variant="body2">
+                <strong>Functional User:</strong> {item.FunctionalUser ? "Yes" : "No"}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Block Access:</strong> {item.BlockAccess ? "Yes" : "No"}
+              </Typography>
+              <Typography variant="body2">
+                <strong>O365 Email:</strong> {item.O365Email}
+              </Typography>
+              <Typography variant="body2">
+                <strong>MFA Mobile:</strong> {item.MFA_Mobile}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Colour Mode:</strong> {item.ColourMode}
+              </Typography>
+              <Typography variant="body2">
                 <strong>AdminUser Flag:</strong> {item.AdminUser}
               </Typography>
             </CardContent>
@@ -190,6 +215,30 @@ const Dashboard = () => {
             value={formData.Email}
             onChange={handleChange}
           />
+          <TextField
+            margin="dense"
+            name="O365Email"
+            label="O365 Email"
+            fullWidth
+            value={formData.O365Email}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="MFA_Mobile"
+            label="MFA Mobile"
+            fullWidth
+            value={formData.MFA_Mobile}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            name="ColourMode"
+            label="Colour Mode"
+            fullWidth
+            value={formData.ColourMode}
+            onChange={handleChange}
+          />
           <FormControlLabel
             control={
               <Switch
@@ -199,6 +248,26 @@ const Dashboard = () => {
               />
             }
             label="Is Admin"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={formData.FunctionalUser}
+                onChange={handleSwitchChange}
+                name="FunctionalUser"
+              />
+            }
+            label="Functional User"
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={formData.BlockAccess}
+                onChange={handleSwitchChange}
+                name="BlockAccess"
+              />
+            }
+            label="Block Access"
           />
           <TextField
             margin="dense"
