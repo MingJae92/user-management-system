@@ -2,10 +2,9 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "../DatabaseConnection/databaseConnection.js";
-import sql from "mssql";
 
 import userRoutes from "../Routes/userRoutes.js";
-import createUserRoutes from "../Routes/createUserRoutes.js"
+import createUserRoutes from "../Routes/createUserRoutes.js";
 import updateUserRoutes from "../Routes/updateUserRoutes.js";
 import deleteUserRoutes from "../Routes/deleteUserRoutes.js";
 
@@ -20,8 +19,6 @@ app.use("/api/users", userRoutes);
 app.use("/api/users/createuser", createUserRoutes);
 app.use("/api/users/updateuser", updateUserRoutes);
 app.use("/api/users/deleteuser", deleteUserRoutes);
-
-// ... rest of your code
 
 const startServer = async () => {
   try {

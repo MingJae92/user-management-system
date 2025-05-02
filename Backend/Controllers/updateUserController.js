@@ -1,5 +1,5 @@
 import { connectDB, sql } from "../DatabaseConnection/databaseConnection.js";
- 
+
 const updateUser = async (req, res) => {
   const { userID } = req.params;
   const {
@@ -31,8 +31,7 @@ const updateUser = async (req, res) => {
       .input("BlockAccess", sql.Int, BlockAccess)
       .input("O365Email", sql.NVarChar, O365Email)
       .input("MFA_Mobile", sql.NVarChar, MFA_Mobile)
-      .input("ColourMode", sql.NVarChar, ColourMode)
-      .query(`
+      .input("ColourMode", sql.NVarChar, ColourMode).query(`
         UPDATE Users
         SET 
           DisplayName = @DisplayName,
@@ -49,15 +48,19 @@ const updateUser = async (req, res) => {
       `);
 
     if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ message: "User not found or no changes made" });
+      return res
+        .status(404)
+        .json({ message: "User not found or no changes made" });
     }
 
-    console.log("✅ User updated successfully:", userID);
+    console.log(" User updated successfully:", userID);
     res.status(200).json({ message: "User updated successfully" });
   } catch (error) {
-    console.error("❌ Error updating user:", error);
-    res.status(500).json({ message: "Failed to update user", error: error.message });
+    console.error(" Error updating user:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to update user", error: error.message });
   }
 };
 
-export {updateUser}
+export { updateUser };
