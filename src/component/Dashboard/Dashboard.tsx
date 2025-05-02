@@ -28,6 +28,7 @@ import {
 import useCreateUser from "../../hooks/useCreateUser";
 import useReadUser from "../../hooks/useReadUser";
 import useDeleteUser from "../../hooks/useDeleteUser";
+import useUpdateUser from "../../hooks/useUpdateUser"; // Importing useUpdateUser hook
 import { UserInput, User } from "../../types/userTypes/userTypes.types";
 
 const Dashboard = () => {
@@ -35,12 +36,14 @@ const Dashboard = () => {
   const { loading, error, userData, refetch } = useReadUser();
   const { createUser } = useCreateUser();
   const { deleteUser } = useDeleteUser();
+  const { updateUser } = useUpdateUser(); 
 
   const [filterType, setFilterType] = useState<string>("all");
   const [open, setOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<number | null>(null);
-
+  const [updateDialogOpen, setUpdateDialogOpen] = useState(false); // State to open update dialog
+  const [selectedUser, setSelectedUser] = useState<User | null>(null); // State for selected user to update
   const [formData, setFormData] = useState<UserInput>({
     DisplayName: "",
     Email: "",
@@ -105,6 +108,44 @@ const Dashboard = () => {
     }
     setDeleteDialogOpen(false);
     setUserToDelete(null);
+  };
+
+  const handleUpdateUser = async () => {
+    if (selectedUser) {
+      await updateUser({ ...selectedUser, ...formData });
+      await refetch();
+      setUpdateDialogOpen(false);
+      setSelectedUser(null);
+      setFormData({
+        DisplayName: "",
+        Email: "",
+        Status: "Active",
+        IsOSPAdmin: false,
+        FunctionalUser: false,
+        BlockAccess: false,
+        O365Email: "",
+        MFA_Mobile: "",
+        ColourMode: "Light",
+        AdminUser: 0,
+      });
+    }
+  };
+
+  const handleOpenUpdateDialog = (user: User) => {
+    setSelectedUser(user);
+    setFormData({
+      DisplayName: user.DisplayName,
+      Email: user.Email,
+      Status: user.Status,
+      IsOSPAdmin: user.IsOSPAdmin,
+      FunctionalUser: user.FunctionalUser,
+      BlockAccess: user.BlockAccess,
+      O365Email: user.O365Email,
+      MFA_Mobile: user.MFA_Mobile,
+      ColourMode: user.ColourMode,
+      AdminUser: user.AdminUser,
+    });
+    setUpdateDialogOpen(true);
   };
 
   if (!user) {
@@ -174,6 +215,14 @@ const Dashboard = () => {
               <Typography variant="body2"><strong>AdminUser Flag:</strong> {item.AdminUser}</Typography>
               <Button
                 variant="outlined"
+                color="primary"
+                onClick={() => handleOpenUpdateDialog(item)}
+                sx={{ mt: 2 }}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="outlined"
                 color="error"
                 onClick={() => confirmDelete(item.UserID)}
                 sx={{ mt: 2 }}
@@ -202,6 +251,26 @@ const Dashboard = () => {
         <DialogActions>
           <Button onClick={() => setOpen(false)} color="secondary">Cancel</Button>
           <Button onClick={handleCreateUser} color="primary" variant="contained">Create</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Update User Modal */}
+      <Dialog open={updateDialogOpen} onClose={() => setUpdateDialogOpen(false)}>
+        <DialogTitle>Update User</DialogTitle>
+        <DialogContent>
+          <TextField margin="dense" name="DisplayName" label="Display Name" fullWidth value={formData.DisplayName} onChange={handleChange} />
+          <TextField margin="dense" name="Email" label="Email" fullWidth value={formData.Email} onChange={handleChange} />
+          <TextField margin="dense" name="O365Email" label="O365 Email" fullWidth value={formData.O365Email} onChange={handleChange} />
+          <TextField margin="dense" name="MFA_Mobile" label="MFA Mobile" fullWidth value={formData.MFA_Mobile} onChange={handleChange} />
+          <TextField margin="dense" name="ColourMode" label="Colour Mode" fullWidth value={formData.ColourMode} onChange={handleChange} />
+          <FormControlLabel control={<Switch checked={formData.IsOSPAdmin} onChange={handleSwitchChange} name="IsOSPAdmin" />} label="Is Admin" />
+          <FormControlLabel control={<Switch checked={formData.FunctionalUser} onChange={handleSwitchChange} name="FunctionalUser" />} label="Functional User" />
+          <FormControlLabel control={<Switch checked={formData.BlockAccess} onChange={handleSwitchChange} name="BlockAccess" />} label="Block Access" />
+          <TextField margin="dense" name="AdminUser" label="Admin User Flag" fullWidth type="number" value={formData.AdminUser} onChange={handleChange} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setUpdateDialogOpen(false)} color="secondary">Cancel</Button>
+          <Button onClick={handleUpdateUser} color="primary" variant="contained">Update</Button>
         </DialogActions>
       </Dialog>
 

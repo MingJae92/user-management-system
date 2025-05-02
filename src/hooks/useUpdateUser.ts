@@ -6,11 +6,11 @@ function useUpdateUser() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
-  const updateUser = async ( updatedUser: User) => {
+  const updateUser = async ( updatedUser: User) => {    
     setLoading(true);
     try {
       const dataResponse = await axios.put(
-        `http://localhost:9000/api/users/${updatedUser.UserID}`,
+        `http://localhost:9000/api/users/updateuser/${updatedUser.UserID}`,
         updatedUser
       );
       return dataResponse;

@@ -1,3 +1,5 @@
+import { connectDB, sql } from "../DatabaseConnection/databaseConnection.js";
+ 
 const updateUser = async (req, res) => {
   const { userID } = req.params;
   const {
