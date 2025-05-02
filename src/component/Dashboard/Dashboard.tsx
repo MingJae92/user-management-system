@@ -381,16 +381,16 @@ const Dashboard = () => {
             error={!!errors.O365Email}
             helperText={errors.O365Email}
           />
- <TextField
-        label="Colour Mode (Light/Dark)"
-        name="ColourMode"
-        value={formData.ColourMode}
-        onChange={handleChange}
-        fullWidth
-        margin="normal"
-        error={!!errors.ColourMode}
-        helperText={errors.ColourMode || "Enter 'Light' or 'Dark'"}
-      />
+          <TextField
+            label="Colour Mode (Light/Dark)"
+            name="ColourMode"
+            value={formData.ColourMode}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            error={!!errors.ColourMode}
+            helperText={errors.ColourMode || "Enter 'Light' or 'Dark'"}
+          />
 
           <FormControlLabel
             control={
@@ -468,6 +468,16 @@ const Dashboard = () => {
             helperText={errors.O365Email}
           />
 
+          <TextField
+            label="Colour Mode (Light/Dark)"
+            name="ColourMode"
+            value={formData.ColourMode}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            error={!!errors.ColourMode}
+            helperText={errors.ColourMode}
+          />
 
           <FormControlLabel
             control={
@@ -499,7 +509,6 @@ const Dashboard = () => {
             }
             label="Block Access"
           />
-          
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} color="primary">
