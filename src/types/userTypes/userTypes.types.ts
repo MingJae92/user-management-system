@@ -1,7 +1,7 @@
 import { ReactNode, Key } from "react";
 
 export interface User {
-  UserID: Key | null | undefined;
+  UserID: number;
   //   displayName: unknown;
   //   email: unknown;
   //   password: unknown;
@@ -17,12 +17,19 @@ export interface User {
   AdminUser: number;
   BlockAccess: number;
   O365Email: string;
-  MFA_Mobile: string;
+  MFA_Mobile: number;
   ColourMode: string;
   HierarchyMaintenance: boolean;
 }
 
+
+
 export interface UserInput {
+    O365Email: unknown;
+    MFA_Mobile: unknown;
+    ColourMode: unknown;
+    FunctionalUser: boolean | undefined;
+    BlockAccess: boolean | undefined;
     DisplayName: string;
     Email: string;
     Status: string;

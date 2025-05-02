@@ -1,12 +1,25 @@
-import sql from "mssql"
-import { connectDB } from "../DatabaseConnection/databaseConnection.js"
+const updateUser = async (req, res) => {
+  const { userID } = req.params;
+  const {
+    DisplayName,
+    Email,
+    IsOSPAdmin,
+    Status,
+    FunctionalUser,
+    AdminUser,
+    BlockAccess,
+    O365Email,
+    MFA_Mobile,
+    ColourMode,
+  } = req.body;
 
-const updateUser = async()=>{
-    const { UserID, DisplayName, Email, IsOSPAdmin, Status, FunctionalUser, AdminUser, BlockAccess, O365Email, MFA_Mobile, ColourMode } = req.body;
-    try {
-        const pool = await connectDB()
-        await pool.request()
-        .input("UserID", sql.Int, UserID)
+  console.log("Request Body:", req.body);
+
+  try {
+    const pool = await connectDB();
+    const result = await pool
+      .request()
+      .input("UserID", sql.Int, userID)
       .input("DisplayName", sql.NVarChar, DisplayName)
       .input("Email", sql.NVarChar, Email)
       .input("IsOSPAdmin", sql.Bit, IsOSPAdmin)
@@ -32,11 +45,17 @@ const updateUser = async()=>{
           ColourMode = @ColourMode
         WHERE UserID = @UserID
       `);
-      res.status(200).json({message:"User update successfully"})
-    } catch (error) {
-        console.log("Error updating user:", error)
-        res.status(500).json({message:"Failed to update user:", error:error.message})
-    }
-}
 
-export{updateUser}
+    if (result.rowsAffected[0] === 0) {
+      return res.status(404).json({ message: "User not found or no changes made" });
+    }
+
+    console.log("✅ User updated successfully:", userID);
+    res.status(200).json({ message: "User updated successfully" });
+  } catch (error) {
+    console.error("❌ Error updating user:", error);
+    res.status(500).json({ message: "Failed to update user", error: error.message });
+  }
+};
+
+export {updateUser}

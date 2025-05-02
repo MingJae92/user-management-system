@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "../Context/Authcontext";
 import {
   Typography,
@@ -27,15 +27,19 @@ import {
 } from "../../styles/dashBoardStyles/dashBoardStyles.styles";
 import useCreateUser from "../../hooks/useCreateUser";
 import useReadUser from "../../hooks/useReadUser";
+import useDeleteUser from "../../hooks/useDeleteUser";
 import { UserInput, User } from "../../types/userTypes/userTypes.types";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const { loading, error, userData, refetch } = useReadUser();
   const { createUser } = useCreateUser();
+  const { deleteUser } = useDeleteUser();
 
   const [filterType, setFilterType] = useState<string>("all");
   const [open, setOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<number | null>(null);
 
   const [formData, setFormData] = useState<UserInput>({
     DisplayName: "",
@@ -58,26 +62,17 @@ const Dashboard = () => {
       admin: () => users.filter((u) => u.IsOSPAdmin),
       all: () => users,
     };
-
     return filterMap[criteria]?.() || users;
   }
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: checked,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: checked }));
   };
 
   const handleCreateUser = async () => {
@@ -98,12 +93,22 @@ const Dashboard = () => {
     });
   };
 
+  const confirmDelete = (userId: number) => {
+    setUserToDelete(userId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (userToDelete !== null) {
+      await deleteUser(userToDelete);
+      await refetch();
+    }
+    setDeleteDialogOpen(false);
+    setUserToDelete(null);
+  };
+
   if (!user) {
-    return (
-      <Typography sx={errorText}>
-        Please log in to access the dashboard.
-      </Typography>
-    );
+    return <Typography sx={errorText}>Please log in to access the dashboard.</Typography>;
   }
 
   if (loading) {
@@ -129,12 +134,7 @@ const Dashboard = () => {
         Log out
       </Button>
 
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpen(true)}
-        sx={{ mt: 3 }}
-      >
+      <Button variant="contained" color="primary" onClick={() => setOpen(true)} sx={{ mt: 3 }}>
         Create New User
       </Button>
 
@@ -163,129 +163,57 @@ const Dashboard = () => {
                 <Avatar sx={{ mr: 2 }}>{item.DisplayName[0]}</Avatar>
                 <Typography variant="h6">{item.DisplayName}</Typography>
               </Box>
-              <Typography variant="body2">
-                <strong>Email:</strong> {item.Email}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Status:</strong> {item.Status}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Is Admin:</strong> {item.IsOSPAdmin ? "Yes" : "No"}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Functional User:</strong> {item.FunctionalUser ? "Yes" : "No"}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Block Access:</strong> {item.BlockAccess ? "Yes" : "No"}
-              </Typography>
-              <Typography variant="body2">
-                <strong>O365 Email:</strong> {item.O365Email}
-              </Typography>
-              <Typography variant="body2">
-                <strong>MFA Mobile:</strong> {item.MFA_Mobile}
-              </Typography>
-              <Typography variant="body2">
-                <strong>Colour Mode:</strong> {item.ColourMode}
-              </Typography>
-              <Typography variant="body2">
-                <strong>AdminUser Flag:</strong> {item.AdminUser}
-              </Typography>
+              <Typography variant="body2"><strong>Email:</strong> {item.Email}</Typography>
+              <Typography variant="body2"><strong>Status:</strong> {item.Status}</Typography>
+              <Typography variant="body2"><strong>Is Admin:</strong> {item.IsOSPAdmin ? "Yes" : "No"}</Typography>
+              <Typography variant="body2"><strong>Functional User:</strong> {item.FunctionalUser ? "Yes" : "No"}</Typography>
+              <Typography variant="body2"><strong>Block Access:</strong> {item.BlockAccess ? "Yes" : "No"}</Typography>
+              <Typography variant="body2"><strong>O365 Email:</strong> {item.O365Email}</Typography>
+              <Typography variant="body2"><strong>MFA Mobile:</strong> {item.MFA_Mobile}</Typography>
+              <Typography variant="body2"><strong>Colour Mode:</strong> {item.ColourMode}</Typography>
+              <Typography variant="body2"><strong>AdminUser Flag:</strong> {item.AdminUser}</Typography>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={() => confirmDelete(item.UserID)}
+                sx={{ mt: 2 }}
+              >
+                Delete
+              </Button>
             </CardContent>
           </Card>
         ))}
       </Box>
 
-      {/* Modal */}
+      {/* Create User Modal */}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Create New User</DialogTitle>
         <DialogContent>
-          <TextField
-            margin="dense"
-            name="DisplayName"
-            label="Display Name"
-            fullWidth
-            value={formData.DisplayName}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="Email"
-            label="Email"
-            fullWidth
-            value={formData.Email}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="O365Email"
-            label="O365 Email"
-            fullWidth
-            value={formData.O365Email}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="MFA_Mobile"
-            label="MFA Mobile"
-            fullWidth
-            value={formData.MFA_Mobile}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="ColourMode"
-            label="Colour Mode"
-            fullWidth
-            value={formData.ColourMode}
-            onChange={handleChange}
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={formData.IsOSPAdmin}
-                onChange={handleSwitchChange}
-                name="IsOSPAdmin"
-              />
-            }
-            label="Is Admin"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={formData.FunctionalUser}
-                onChange={handleSwitchChange}
-                name="FunctionalUser"
-              />
-            }
-            label="Functional User"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={formData.BlockAccess}
-                onChange={handleSwitchChange}
-                name="BlockAccess"
-              />
-            }
-            label="Block Access"
-          />
-          <TextField
-            margin="dense"
-            name="AdminUser"
-            label="Admin User Flag"
-            fullWidth
-            type="number"
-            value={formData.AdminUser}
-            onChange={handleChange}
-          />
+          <TextField margin="dense" name="DisplayName" label="Display Name" fullWidth value={formData.DisplayName} onChange={handleChange} />
+          <TextField margin="dense" name="Email" label="Email" fullWidth value={formData.Email} onChange={handleChange} />
+          <TextField margin="dense" name="O365Email" label="O365 Email" fullWidth value={formData.O365Email} onChange={handleChange} />
+          <TextField margin="dense" name="MFA_Mobile" label="MFA Mobile" fullWidth value={formData.MFA_Mobile} onChange={handleChange} />
+          <TextField margin="dense" name="ColourMode" label="Colour Mode" fullWidth value={formData.ColourMode} onChange={handleChange} />
+          <FormControlLabel control={<Switch checked={formData.IsOSPAdmin} onChange={handleSwitchChange} name="IsOSPAdmin" />} label="Is Admin" />
+          <FormControlLabel control={<Switch checked={formData.FunctionalUser} onChange={handleSwitchChange} name="FunctionalUser" />} label="Functional User" />
+          <FormControlLabel control={<Switch checked={formData.BlockAccess} onChange={handleSwitchChange} name="BlockAccess" />} label="Block Access" />
+          <TextField margin="dense" name="AdminUser" label="Admin User Flag" fullWidth type="number" value={formData.AdminUser} onChange={handleChange} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleCreateUser} color="primary" variant="contained">
-            Create
-          </Button>
+          <Button onClick={() => setOpen(false)} color="secondary">Cancel</Button>
+          <Button onClick={handleCreateUser} color="primary" variant="contained">Create</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this user?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} color="secondary">Cancel</Button>
+          <Button onClick={handleDelete} color="error" variant="contained">Delete</Button>
         </DialogActions>
       </Dialog>
     </Box>

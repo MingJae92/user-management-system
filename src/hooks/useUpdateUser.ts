@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { User } from "../types/userTypes/userTypes.types";
 import axios from "axios";
 
@@ -6,7 +6,7 @@ function useUpdateUser() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
-  const updateUser = async (UserID: number, updatedUser: User) => {
+  const updateUser = async ( updatedUser: User) => {
     setLoading(true);
     try {
       const dataResponse = await axios.put(

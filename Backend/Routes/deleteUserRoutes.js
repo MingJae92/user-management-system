@@ -3,6 +3,6 @@ import { deleteUser } from "../Controllers/deleteUserController.js";
 
 const router = express.Router();
 
-router.delete("/:userID", deleteUser)
+router.delete("/:id", deleteUser)
 
 export default router

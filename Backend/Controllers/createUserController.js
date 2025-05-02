@@ -23,16 +23,17 @@ const createUser = async (req, res) => {
     // Add any other mappings here if necessary
   };
 
-  // Map ColourMode from 'L' or 'D' to 'Light' or 'Dark'
+  // If ColourMode is a valid short form (like 'L' or 'D'), convert it to the full form ('Light', 'Dark')
   const formattedColourMode = validColourModes[ColourMode] || ColourMode;
 
-  // Ensure ColourMode does not exceed the max length (e.g., 50 characters)
-  const maxColourModeLength = 50;
-  const truncatedColourMode = formattedColourMode.substring(0, maxColourModeLength);
+  // Ensure ColourMode is a non-empty string
+  if (!formattedColourMode || typeof formattedColourMode !== "string" || formattedColourMode.trim().length === 0) {
+    return res.status(400).json({
+      message: "ColourMode must be a non-empty string with a length greater than 0.",
+    });
+  }
 
-  console.log("ColourMode before insert:", ColourMode);
-  console.log("Formatted ColourMode:", formattedColourMode);
-  console.log("Truncated ColourMode:", truncatedColourMode);
+  console.log("ColourMode is valid:", formattedColourMode);
 
   // Validate required fields
   if (!DisplayName || !Email || !Status || IsOSPAdmin === undefined) {
@@ -56,7 +57,7 @@ const createUser = async (req, res) => {
       .input("BlockAccess", sql.Int, BlockAccess ?? null)
       .input("O365Email", sql.NVarChar, O365Email ?? null)
       .input("MFA_Mobile", sql.NVarChar, MFA_Mobile ?? null)
-      .input("ColourMode", sql.NVarChar, truncatedColourMode)
+      .input("ColourMode", sql.NVarChar, formattedColourMode)
       .query(`
         INSERT INTO Users 
         (DisplayName, Email, IsOSPAdmin, Status, FunctionalUser, AdminUser, BlockAccess, O365Email, MFA_Mobile, ColourMode)

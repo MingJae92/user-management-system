@@ -14,12 +14,12 @@ dotenv.config({ path: "../../config/.env" });
 const app = express();
 app.use(cors());
 app.use(express.json());
-const PORT = process.env.SERVER_PORT || 7000;
+const PORT = process.env.SERVER_PORT;
 
 app.use("/api/users", userRoutes);
 app.use("/api/users/createuser", createUserRoutes);
-// app.use("/api/users/updateuser", updateUserRoutes);
-// app.use("/api/users/deleteuser", deleteUserRoutes);
+app.use("/api/users/updateuser", updateUserRoutes);
+app.use("/api/users/deleteuser", deleteUserRoutes);
 
 // ... rest of your code
 
