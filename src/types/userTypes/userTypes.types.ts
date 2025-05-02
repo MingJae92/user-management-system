@@ -15,7 +15,7 @@ export interface User {
 
 export interface UserInput {
   O365Email: string;
-  MFA_Mobile: string; // <- make consistent
+  MFA_Mobile: string; 
   ColourMode: string;
   FunctionalUser: boolean;
   BlockAccess: boolean;
