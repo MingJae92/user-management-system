@@ -10,7 +10,7 @@ function useDeleteUser() {
       setLoading(true);
       await axios.delete(`http://localhost:9000/api/users/deleteuser/${userID}`);
       return true;
-    } catch (error: any) {
+    } catch (error:any) {
       setError(error.response?.data?.message || error.message || "Delete failed");
       return false;
     } finally {

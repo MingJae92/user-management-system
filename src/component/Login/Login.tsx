@@ -2,7 +2,6 @@ import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { useAuth } from "../Context/Authcontext";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { Typography } from "@mui/material";
 import axios from "axios";
 import {
   Wrapper,

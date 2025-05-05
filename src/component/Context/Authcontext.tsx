@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
-    navigate("/login");
+    navigate("/");
   };
 
   const value: AuthcontextDataTypes = {
